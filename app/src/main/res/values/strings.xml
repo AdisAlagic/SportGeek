@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SportGeek</string>
+    <string name="title">SportGeek\nАвторизация</string>
+    <string name="login_hint">Логин</string>
+    <string name="password_hint">Пароль</string>
+    <string name="remember_data">Запомнить данные</string>
+    <string name="enter">Войти</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
