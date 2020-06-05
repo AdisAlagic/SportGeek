@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="main"
+    app:iconSpaceReserved="false">
+    <EditTextPreference
+        android:id="@+id/url"
+        android:defaultValue="192.168.31.38"
+        android:key="url"
+        android:summary="@string/default_url"
+        app:useSimpleSummaryProvider="true"
+        android:title="Change url"
+        app:iconSpaceReserved="false" />
+    <SwitchPreference
+        app:iconSpaceReserved="false"
+        android:id="@+id/sw_use_port"
+        android:defaultValue="true"
+        android:key="use"
+        android:title="Use Port" />
+    <EditTextPreference
+        app:iconSpaceReserved="false"
+        android:id="@+id/port"
+        android:key="port"
+        android:dependency="use"
+        android:defaultValue="1337"
+        app:useSimpleSummaryProvider="true"
+        android:title="Port" />
+</PreferenceScreen>

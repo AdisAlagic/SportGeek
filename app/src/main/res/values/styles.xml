@@ -21,4 +21,9 @@
         <item name="colorPrimaryDark">#0037FF</item>
         <item name="colorAccent">#0037FF</item>
     </style>
+
+    <style name="DarkActionBar" parent="Dark">
+        <item name="windowNoTitle">false</item>
+        <item name="windowActionBar">true</item>
+    </style>
 </resources>

@@ -2,6 +2,7 @@ package com.adisalagic.sportgeek;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +41,7 @@ public class Login extends AppCompatActivity {
         opback = findViewById(R.id.opback);
         bar = findViewById(R.id.progress);
         button = findViewById(R.id.submit);
+        ApiHandler.getInstance().recreateApi(PreferenceManager.getDefaultSharedPreferences(this));
     }
 
     @Override
@@ -178,5 +180,10 @@ public class Login extends AppCompatActivity {
         String login    = getSharedPreferences("apple", MODE_PRIVATE).getString("login", null);
         String password = getSharedPreferences("apple", MODE_PRIVATE).getString("password", null);
         return new Pair<>(login, password);
+    }
+
+    public void openSettings(View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

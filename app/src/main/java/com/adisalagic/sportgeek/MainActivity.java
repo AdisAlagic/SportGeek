@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                if (!ApiHandler.getInstance().isApiAlive()){
+                if (!ApiHandler.getInstance().isApiAlive()) {
                     title.post(new Runnable() {
                         @Override
                         public void run() {

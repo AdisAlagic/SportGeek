@@ -226,4 +226,28 @@ public class Api {
         countDownLatch.await();
         return atomicBoolean.get();
     }
+
+    public boolean deleteItem(int catalogId, int id) throws InterruptedException {
+        Request request = new Request.Builder().url(url + "/" + version + "/catalog/" + catalogId + "/" + id + "?token=" + token)
+                .delete()
+                .build();
+        Call                 call           = client.newCall(request);
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final AtomicBoolean  atomicBoolean  = new AtomicBoolean();
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                atomicBoolean.set(false);
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                atomicBoolean.set(response.code() != 401);
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+        return atomicBoolean.get();
+    }
 }

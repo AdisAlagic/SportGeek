@@ -1,5 +1,6 @@
 package com.adisalagic.sportgeek;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.adisalagic.sportgeek.api.Api;
@@ -22,6 +23,23 @@ public class ApiHandler {
                 .usePort(true)
                 .build();
     }
+
+
+    public void recreateApi(SharedPreferences sharedPreferences){
+        String url = sharedPreferences.getString("url", "192.168.31.38");
+        int port = Integer.parseInt(sharedPreferences.getString("port", "-1"));
+        ApiBuilder apiBuilder = new ApiBuilder();
+        apiBuilder.setUrl(url);
+        boolean usingPort = port == -1;
+        if (!usingPort){
+            apiBuilder.setPort(port);
+            apiBuilder.usePort(true);
+        }else {
+            apiBuilder.usePort(false);
+        }
+        api = apiBuilder.build();
+    }
+
 
     public void setResult(AuthResult result) {
         this.result = result;
