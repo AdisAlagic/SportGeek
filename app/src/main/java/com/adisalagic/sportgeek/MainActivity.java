@@ -202,4 +202,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    // TODO: 07.06.2020 Create basket
 }

@@ -16,6 +16,12 @@ import java.util.Objects;
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ApiHandler.getInstance().recreateApi(PreferenceManager.getDefaultSharedPreferences(this));
@@ -28,9 +34,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Settings");
+
         }
 
     }
+
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override

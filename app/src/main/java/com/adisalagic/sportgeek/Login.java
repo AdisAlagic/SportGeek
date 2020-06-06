@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adisalagic.sportgeek.api.ApiRoles;
 import com.adisalagic.sportgeek.api.AuthResult;
 
 public class Login extends AppCompatActivity {
@@ -185,5 +186,12 @@ public class Login extends AppCompatActivity {
     public void openSettings(View view){
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    public void onLoginlessClick(View view){
+        Intent intent = new Intent(view.getContext(), MainActivity.class);
+        ApiHandler.getInstance().setRole(ApiRoles.GUEST);
+        startActivity(intent);
+        finish();
     }
 }

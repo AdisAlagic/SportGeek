@@ -5,15 +5,20 @@ import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -123,7 +128,7 @@ public class Api {
     }
 
     public String addNewCategory(String name) throws InterruptedException {
-        RequestBody        requestBody = RequestBody.create(null, new byte[]{});
+        RequestBody requestBody = RequestBody.create(null, new byte[]{});
         Request request = new Request.Builder()
                 .url(url + "/" + version + "/catalog?name=" + name + "&token=" + token)
                 .post(requestBody)
@@ -140,10 +145,10 @@ public class Api {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() == 200){
+                if (response.code() == 200) {
                     countDownLatch.countDown();
                 }
-                if (response.code() == 401){
+                if (response.code() == 401) {
                     error.append("Token check failed");
                 }
 
@@ -169,7 +174,7 @@ public class Api {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 countDownLatch.countDown();
-                if (response.code() == 401){
+                if (response.code() == 401) {
                     throw new IOException("Token check failed");
                 }
             }
@@ -179,8 +184,8 @@ public class Api {
 
 
     public boolean sendLiveSignal() throws InterruptedException {
-        Request             request       = new Request.Builder().url(url).build();
-        final AtomicBoolean atomicBoolean = new AtomicBoolean();
+        Request              request        = new Request.Builder().url(url).build();
+        final AtomicBoolean  atomicBoolean  = new AtomicBoolean();
         Call                 call           = client.newCall(request);
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         call.enqueue(new Callback() {
@@ -234,6 +239,71 @@ public class Api {
         Call                 call           = client.newCall(request);
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final AtomicBoolean  atomicBoolean  = new AtomicBoolean();
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                atomicBoolean.set(false);
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                atomicBoolean.set(response.code() != 401);
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+        return atomicBoolean.get();
+    }
+
+    public int addItem(final int catalogId, final String name, int amount, double price) throws InterruptedException {
+        RequestBody body = RequestBody.create(null, new byte[]{});
+        Request request = new Request.Builder().url(url + "/" + version + "/catalog/" + catalogId +
+                "?name=" + name + "&price=" + price + "&amount=" + amount + "&token=" + token).post(body).build();
+        final AtomicInteger  atomicInteger  = new AtomicInteger();
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        Call                 call           = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                atomicInteger.set(-1);
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 401){
+                    try {
+                        for (Item item : getItems(catalogId)){
+                            if (item.getName().equals(name)){
+                                atomicInteger.set(item.getId());
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        atomicInteger.set(-1);
+                    }
+                }
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+        return atomicInteger.get();
+    }
+
+    public boolean uploadImageToItem(int catalogId, int id, File file) throws InterruptedException {
+        final MediaType IMAGE = MediaType.parse(URLConnection.guessContentTypeFromName(file.getName()));
+
+        assert IMAGE != null;
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("image", file.getName(), RequestBody.create(IMAGE, file)).build();
+        Request request = new Request.Builder().url(url + "/" + version + "/catalog/" + catalogId + "/" + id + "/upload?token=" + token)
+                .post(body)
+                .build();
+
+        final AtomicBoolean  atomicBoolean  = new AtomicBoolean(false);
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        Call                 call           = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

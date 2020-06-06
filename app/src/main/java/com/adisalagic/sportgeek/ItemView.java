@@ -70,4 +70,6 @@ public class ItemView extends AppCompatActivity {
             return null;
         }
     }
+
+    // TODO: 07.06.2020 Create edit for existing item
 }
