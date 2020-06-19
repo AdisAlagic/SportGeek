@@ -35,6 +35,7 @@ import com.adisalagic.sportgeek.api.Item;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CategoryItems extends AppCompatActivity {
@@ -139,7 +140,11 @@ public class CategoryItems extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
 //            Bitmap bitmap = data.getExtras().getParcelable("data");
-            file = new File(getPath(this, data.getData()));
+            try {
+                file = FileUtil.from(this, data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             String filename = file.getName();
             tvfilename.setText(filename);
             tvfilename.setVisibility(View.VISIBLE);

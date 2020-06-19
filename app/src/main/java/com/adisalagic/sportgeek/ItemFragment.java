@@ -15,9 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.adisalagic.sportgeek.api.ApiRoles;
 import com.adisalagic.sportgeek.api.Item;
-
-import java.util.Objects;
 
 public class ItemFragment extends Fragment {
     View     rootView;
@@ -53,6 +52,9 @@ public class ItemFragment extends Fragment {
         rootView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                if (ApiHandler.getInstance().getRole() == ApiRoles.GUEST){
+                    return false;
+                }
                 AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setMessage("Вы хотите удалить " + item.getName() + "?")
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
